@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "HELICOPTER_SCREEN_SCHEDULE")
+    @Table(name = "HELICOPTER_SCREEN_SCHEDULE")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

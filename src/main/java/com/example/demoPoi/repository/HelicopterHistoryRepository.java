@@ -3,11 +3,15 @@ package com.example.demoPoi.repository;
 import com.example.demoPoi.entities.HelicopterCompetitorLocation;
 import com.example.demoPoi.entities.HelicopterHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface HelicopterHistoryRepository extends JpaRepository<HelicopterHistory, Integer> {
+    @Transactional
+    @Modifying
     @Query(value = "INSERT INTO HELICOPTER_HST (\n" +
             "    ID,NAME_FILE, SIZE_FILE, TIME_START, END_START,\n" +
             "    STATUS, MESSAGE_ERROR, USER_ID\n" +

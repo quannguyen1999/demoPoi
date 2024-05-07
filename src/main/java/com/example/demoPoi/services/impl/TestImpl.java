@@ -66,8 +66,11 @@ public class TestImpl implements TestService {
     @Override
     public void handlerData(byte[] data) {
         String dateOccur = df.format(new Date());
-        HelicopterHistory historyHelicopter = initHistoryHelicopter(new HelicopterHistory());
+        //Delete data
+        helicopterCompetitorLocationRepository.deleteDataToday(dateOccur);
+        helicopterScreenScheduleRepository.deleteDataToday(dateOccur);
 
+        HelicopterHistory historyHelicopter = initHistoryHelicopter(new HelicopterHistory());
         try
         {
             // Create a ByteArrayInputStream from the byte array
@@ -144,7 +147,6 @@ public class TestImpl implements TestService {
                         helicopterCompetitorLocation.getUserId(),
                         helicopterCompetitorLocation.getUserNm()
                 );
-
             }
         }
     }
@@ -165,7 +167,7 @@ public class TestImpl implements TestService {
                             helicopterScreenSchedule.getSeatCnt(),
                             helicopterScreenSchedule.getDateOccur(),
                             helicopterScreenSchedule.getUserId()
-                            ));
+                    ));
             if(isUserExists && isMovExists && isScnDyExists && isNameExists && isScreenExists && isSeatCntExists && isRecordExists){
                 helicopterScreenScheduleRepository.insertCustom(
                         helicopterScreenSchedule.getMovNm(),
@@ -315,6 +317,14 @@ public class TestImpl implements TestService {
         if(column == COLUMN_CITY){
 
         }
+        //~RCM
+        if(column == COLUMN_RCM){
+            helicopterScreenSchedule.setUserNm(getCellType(cell));
+        }
+        //~RCM_ID
+        if(column == COLUMN_RCM_ID){
+            helicopterScreenSchedule.setUserId(getCellType(cell));
+        }
         return helicopterScreenSchedule;
     }
 
@@ -371,7 +381,7 @@ public class TestImpl implements TestService {
         switch (cell.getCellType())
         {
             case Cell.CELL_TYPE_NUMERIC:
-                result.append(cell.getNumericCellValue());
+                result.append((int) cell.getNumericCellValue());
                 break;
             case Cell.CELL_TYPE_STRING:
                 result.append(cell.getStringCellValue());

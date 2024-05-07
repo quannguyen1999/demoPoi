@@ -47,6 +47,11 @@ public interface HelicopterCompetitorLocationRepository extends JpaRepository<He
     void insertCustom(String name, String rmNm, String amNm, String cityNm, String dateOccur, String userId, String userNm);
 
 
+    @Transactional
+    @Modifying
+    @Query(value = "delete from HELICOPTER_COMPETITOR_LOCATION where DATE_OCCUR = :dateOccur", nativeQuery = true)
+    void deleteDataToday(String dateOccur);
+
 
 
 }

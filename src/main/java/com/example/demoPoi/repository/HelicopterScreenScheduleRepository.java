@@ -13,22 +13,26 @@ import java.util.List;
 @Repository
 public interface HelicopterScreenScheduleRepository extends JpaRepository<HelicopterScreenSchedule, Integer> {
     @Query(value = "select id " +
-            "from HelicopterScreenSchedule where " +
-            "movNm = :movNm " +
-            "and scnDy = :scnDy " +
-            "and name = :name " +
-            "and screenNm = :screenNm " +
-            "and seatCnt = :seatCnt " +
-            "and dateOccur = :dateOccur " +
-            "and userId = :userId "
-    )
-    List<Integer> findByCustom(String movNm, String scnDy, String name, String screenNm, String seatCnt, String dateOccur, String userId);
-
+            "from HELICOPTER_SCREEN_SCHEDULE where " +
+            "mov_Nm = cast(:movNm as varchar)  " +
+            "and scn_Dy = cast(:scnDy as varchar)  " +
+            "and name = cast(:name as varchar)  "
+            +
+            "and screen_Nm = cast(:screenNm as varchar)  " +
+            "and seat_Cnt = cast(:seatCnt as int)  "
+            +
+            "and date_Occur = cast(:dateOccur as varchar)  " +
+            "and user_Id = cast(:userId as varchar)  "
+    , nativeQuery = true)
+    List<Integer> findByCustom(String movNm, String scnDy,
+                               String name, String screenNm,
+                               String seatCnt, String dateOccur,
+                               String userId);
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO HELICOPTER_SCREEN_SCHEDULE (\n" +
             "    ID, MOV_NM, SCN_DY, SCN_FR_TM, SCN_TO_TM,\n" +
-            "    NAME, SCREEN_NM, SEAT_CNT, BIZ_FR_DY, BIZ_TO_DY, DATE_OCCUR, USER_ID\n" +
+            "    NAME, SCREEN_NM, SEAT_CNT, BIZ_FR_DY, BIZ_TO_DY, DATE_OCCUR, USER_ID, USER_NM\n" +
             ") \n" +
             "VALUES (\n" +
             "    NEXTVAL('sqe_id_screen_cptt'), \n" +
@@ -38,7 +42,7 @@ public interface HelicopterScreenScheduleRepository extends JpaRepository<Helico
             "    :scnToTm,\n" +
             "    :name,\n" +
             "    :screenNm,\n" +
-            "    :seatCnt,\n" +
+            "     cast(:seatCnt as int),\n" +
             "    :bizFrDy,\n" +
             "    :bizToDy,\n" +
             "    :dateOccur,\n" +
@@ -50,5 +54,10 @@ public interface HelicopterScreenScheduleRepository extends JpaRepository<Helico
                       String bizFrDy, String bizToDy, String dateOccur, String userId,
                       String userNm
                       );
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from HELICOPTER_SCREEN_SCHEDULE where DATE_OCCUR = :dateOccur", nativeQuery = true)
+    void deleteDataToday(String dateOccur);
 
 }
