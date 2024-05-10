@@ -35,28 +35,31 @@ public class TestImpl implements TestService {
     @Autowired
     private HelicopterHistoryRepository helicopterHistoryRepository;
 
-    private static final String REGEX_HEADER = "Multiplex,Site code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area,City,RCM,RCM ID";
+    private static final String REGEX_HEADER = "Cinema,Screen,Seat,Tier,Company,City,General Region,Region,Type of region,Area,RCM,RCM ID,Date of showing,Session,End Time,Film";
     private static final Integer ROW_HEADER = 1;
-    private static final Integer COLUMN_MUTIPLEX = 1;
-    private static final Integer COLUMN_SITE = 2;
-    private static final Integer COLUMN_CINEMA = 3;
-    private static final Integer COLUMN_SCREEN = 4;
-    private static final Integer COLUMN_FORMAT = 5;
-    private static final Integer COLUMN_BO = 6;
-    private static final Integer COLUMN_ADMITS = 7;
-    private static final Integer COLUMN_SEAT = 8;
-    private static final Integer COLUMN_DOS = 9;
-    private static final Integer COLUMN_SESSION = 10;
-    private static final Integer COLUMN_FILM = 11;
-    private static final Integer COLUMN_TIME_RANGE = 12;
-    private static final Integer COLUMN_SESSION_SHORT = 13;
-    private static final Integer COLUMN_CINEMA_MAP = 14;
-    private static final Integer COLUMN_TIER = 15;
-    private static final Integer COLUMN_REGION = 16;
-    private static final Integer COLUMN_AREA = 17;
-    private static final Integer COLUMN_CITY = 18;
-    private static final Integer COLUMN_RCM = 19;
-    private static final Integer COLUMN_RCM_ID = 20;
+    private static final Integer COLUMN_CINEMA = 1;
+    private static final Integer COLUMN_SCREEN = 2;
+    private static final Integer COLUMN_SEAT = 3;
+    private static final Integer COLUMN_TIER = 4;
+    private static final Integer COLUMN_COMPANY = 5;
+
+    private static final Integer COLUMN_CITY = 6;
+
+    private static final Integer COLUMN_GENERAL_REGION = 7;
+
+    private static final Integer COLUMN_REGION = 8;
+
+    private static final Integer COLUMN_TYPE_OF_REGION = 9;
+    private static final Integer COLUMN_AREA = 10;
+
+    private static final Integer COLUMN_RCM = 11;
+    private static final Integer COLUMN_RCM_ID = 12;
+
+    private static final Integer COLUMN_DOS = 13;
+    private static final Integer COLUMN_SESSION = 14;
+    private static final Integer COLUMN_TIME_END = 15;
+
+    private static final Integer COLUMN_FILM = 16;
 
     private static final String STATUS_ERROR = "error";
     private static final String STATUS_SUCCESS = "success";
@@ -246,29 +249,9 @@ public class TestImpl implements TestService {
         if(column == COLUMN_CINEMA){
             helicopterScreenSchedule.setName(getCellType(cell));
         }
-        //~Mutiplex
-        if(column == COLUMN_MUTIPLEX){
-
-        }
-        //~Site
-        if(column == COLUMN_SITE){
-
-        }
         //~Screen
         if(column == COLUMN_SCREEN){
             helicopterScreenSchedule.setScreenNm(getCellType(cell));
-        }
-        //~Format
-        if(column == COLUMN_FORMAT){
-
-        }
-        //~Bo
-        if(column == COLUMN_BO){
-
-        }
-        //~Admits
-        if(column == COLUMN_ADMITS){
-
         }
         //~Seat
         if(column == COLUMN_SEAT){
@@ -287,34 +270,6 @@ public class TestImpl implements TestService {
         //~Film
         if(column == COLUMN_FILM){
             helicopterScreenSchedule.setMovNm(getCellType(cell));
-
-        }
-        //~TimeRange
-        if(column == COLUMN_TIME_RANGE){
-
-        }
-        //~Session Short
-        if(column == COLUMN_SESSION_SHORT){
-
-        }
-        //~Cinema Map
-        if(column == COLUMN_CINEMA_MAP){
-
-        }
-        //~Tier
-        if(column == COLUMN_TIER){
-
-        }
-        //~Region
-        if(column == COLUMN_REGION){
-
-        }
-        //~Area
-        if(column == COLUMN_AREA){
-
-        }
-        //~City
-        if(column == COLUMN_CITY){
 
         }
         //~RCM
