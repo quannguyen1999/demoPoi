@@ -9,7 +9,9 @@ import com.example.demoPoi.repository.HelicopterCompetitorLocationRepository;
 import com.example.demoPoi.repository.HelicopterHistoryRepository;
 import com.example.demoPoi.repository.HelicopterScreenScheduleRepository;
 import com.example.demoPoi.services.TestService;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,11 +21,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 @Service
 public class TestImpl implements TestService {
@@ -35,40 +37,52 @@ public class TestImpl implements TestService {
     @Autowired
     private HelicopterHistoryRepository helicopterHistoryRepository;
 
-    private static final String REGEX_HEADER = "Cinema,Screen,Seat,Tier,Company,City,General Region,Region,Type of region,Area,RCM,RCM ID,Date of showing,Session,End Time,Film";
+    private static final String REGEX_HEADER = "Multiplex,Site code,Screen,Format,BO,Admits,Seat,Date of showing,Start-time,End-time,Film,Time range,Session (Short),Cinema,Tier,Region,Area,RCM,RCM ID,City";
     private static final Integer ROW_HEADER = 1;
-    private static final Integer COLUMN_CINEMA = 1;
-    private static final Integer COLUMN_SCREEN = 2;
-    private static final Integer COLUMN_SEAT = 3;
-    private static final Integer COLUMN_TIER = 4;
-    private static final Integer COLUMN_COMPANY = 5;
+    private static final Integer COLUMN_MUTIPLEX = 1;
+    private static final Integer COLUMN_SITE = 2;
+    private static final Integer COLUMN_SCREEN = 3;
 
-    private static final Integer COLUMN_CITY = 6;
+    private static final Integer COLUMN_FORMAT = 4;
+    private static final Integer COLUMN_BO = 5;
+    private static final Integer COLUMN_ADMITS = 6;
+    private static final Integer COLUMN_SEAT = 7;
+    private static final Integer COLUMN_DOS = 8;
+    private static final Integer COLUMN_START_TIME = 9;
 
-    private static final Integer COLUMN_GENERAL_REGION = 7;
+    private static final Integer COLUMN_END_TIME = 10;
 
-    private static final Integer COLUMN_REGION = 8;
+    private static final Integer COLUMN_FILM = 11;
 
-    private static final Integer COLUMN_TYPE_OF_REGION = 9;
-    private static final Integer COLUMN_AREA = 10;
+    private static final Integer COLUMN_TIME_RANGE = 12;
 
-    private static final Integer COLUMN_RCM = 11;
-    private static final Integer COLUMN_RCM_ID = 12;
+    private static final Integer COLUMN_SESSION = 13;
 
-    private static final Integer COLUMN_DOS = 13;
-    private static final Integer COLUMN_SESSION = 14;
-    private static final Integer COLUMN_TIME_END = 15;
+    private static final Integer COLUMN_CINEMA = 14;
 
-    private static final Integer COLUMN_FILM = 16;
+    private static final Integer COLUMN_TIER = 15;
+
+    private static final Integer COLUMN_REGION = 16;
+
+    private static final Integer COLUMN_AREA = 17;
+
+    private static final Integer COLUMN_RCM = 18;
+    private static final Integer COLUMN_RCM_ID = 19;
+
+    private static final Integer COLUMN_CITY = 20;
+
 
     private static final String STATUS_ERROR = "error";
     private static final String STATUS_SUCCESS = "success";
-    private static final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-    private static final SimpleDateFormat formatTime = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
+    private static final SimpleDateFormat dfOne = new SimpleDateFormat("yyyyMMdd");
+    private static final SimpleDateFormat dfTwo = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
+    private static final SimpleDateFormat dfThree = new SimpleDateFormat("HH:mm:ss");
+
+    private static final SimpleDateFormat dfFour = new SimpleDateFormat("HHmm");
 
     @Override
     public void handlerData(byte[] data) {
-        String dateOccur = df.format(new Date());
+        String dateOccur = dfOne.format(new Date());
         //Delete data
         helicopterCompetitorLocationRepository.deleteDataToday(dateOccur);
         helicopterScreenScheduleRepository.deleteDataToday(dateOccur);
@@ -94,7 +108,7 @@ public class TestImpl implements TestService {
                 //For each row, iterate through all the columns
                 Iterator<Cell> cellIterator = row.cellIterator();
                 //Validate Header Excel
-                validateHelicopterFile(cellIterator, rowNumber, ws);
+                validateExcelFile(cellIterator, rowNumber, ws);
 
                 while (cellIterator.hasNext() && rowNumber != ROW_HEADER)
                 {
@@ -127,7 +141,7 @@ public class TestImpl implements TestService {
             historyHelicopter.setStatus(STATUS_ERROR);
             historyHelicopter.setMessageError(ex.getMessage());
         }
-        historyHelicopter.setEndStart(formatTime.format(new Date()));
+        historyHelicopter.setEndStart(dfTwo.format(new Date()));
         handlerDBHelicopterHistory(historyHelicopter);
     }
 
@@ -202,7 +216,7 @@ public class TestImpl implements TestService {
         );
     }
 
-    private void validateHelicopterFile(Iterator<Cell> cellIterator, Integer rowNumber, XSSFSheet ws){
+    private void validateExcelFile(Iterator<Cell> cellIterator, Integer rowNumber, XSSFSheet ws){
         String valueAppend = "";
         if(rowNumber != ROW_HEADER){
             return;
@@ -223,54 +237,55 @@ public class TestImpl implements TestService {
         String firstValue = REGEX_HEADER.toLowerCase();
         String secondValue = valueAppend.substring(0, valueAppend.length() - 1).toLowerCase();
         if(!firstValue.equalsIgnoreCase(secondValue)){
-            throw new BadRequestException(MessageErrors.EXCEL_INVALID);
+            throw new BadRequestException(MessageErrors.EXCEL_HEADER_INVALID);
         }
 
     }
 
     private HelicopterHistory initHistoryHelicopter(HelicopterHistory historyHelicopter){
-        historyHelicopter.setDateRun(df.format(new Date()));
-        historyHelicopter.setTimeStart(formatTime.format(new Date()));
-        historyHelicopter.setDateRun(df.format(new Date()));
+        historyHelicopter.setDateRun(dfOne.format(new Date()));
+        historyHelicopter.setTimeStart(dfTwo.format(new Date()));
+        historyHelicopter.setDateRun(dfOne.format(new Date()));
         historyHelicopter.setStatus(STATUS_SUCCESS);
         return historyHelicopter;
     }
 
     private HelicopterScreenSchedule handlerExcelCinema(
             Integer column, HelicopterScreenSchedule helicopterScreenSchedule, Cell cell, String dateOccur
-    ){
+    ) throws ParseException {
         if(ObjectUtils.isEmpty(helicopterScreenSchedule)){
             helicopterScreenSchedule = new HelicopterScreenSchedule();
             helicopterScreenSchedule.setBizFrDy("20170101");
             helicopterScreenSchedule.setBizToDy("20990101");
             helicopterScreenSchedule.setDateOccur(dateOccur);
         }
+        //~Screen
+        if(column == COLUMN_SCREEN){
+            helicopterScreenSchedule.setScreenNm(removeLastZero(getCellType(cell)));
+        }
         //Cinema
         if(column == COLUMN_CINEMA){
             helicopterScreenSchedule.setName(getCellType(cell));
         }
-        //~Screen
-        if(column == COLUMN_SCREEN){
-            helicopterScreenSchedule.setScreenNm(getCellType(cell));
-        }
         //~Seat
         if(column == COLUMN_SEAT){
-            helicopterScreenSchedule.setSeatCnt(getCellType(cell));
+            helicopterScreenSchedule.setSeatCnt(removeLastZero(getCellType(cell)));
         }
         //~Date Of Showing
         if(column == COLUMN_DOS){
-            helicopterScreenSchedule.setScnDy(getCellType(cell));
-            helicopterScreenSchedule.setScnFrTm(getCellType(cell));
-            helicopterScreenSchedule.setScnToTm(getCellType(cell));
-        }
-        //~Session
-        if(column == COLUMN_SESSION){
-
+            helicopterScreenSchedule.setScnDy(removeLastZero(getCellType(cell)));
         }
         //~Film
         if(column == COLUMN_FILM){
             helicopterScreenSchedule.setMovNm(getCellType(cell));
-
+        }
+        //~Start Time
+        if(column == COLUMN_START_TIME){
+            helicopterScreenSchedule.setScnFrTm(convertTimeToHHmm(getCellType(cell)));
+        }
+        //~End Time
+        if(column == COLUMN_END_TIME){
+            helicopterScreenSchedule.setScnToTm(convertTimeToHHmm(getCellType(cell)));
         }
         //~RCM
         if(column == COLUMN_RCM){
@@ -278,9 +293,38 @@ public class TestImpl implements TestService {
         }
         //~RCM_ID
         if(column == COLUMN_RCM_ID){
-            helicopterScreenSchedule.setUserId(getCellType(cell));
+            helicopterScreenSchedule.setUserId(removeLastZero(getCellType(cell)));
         }
         return helicopterScreenSchedule;
+    }
+
+    private String removeLastZero(String value){
+        if(!StringUtils.hasLength(value)){
+            return Strings.EMPTY;
+        }
+        // Remove ".0" if it exists
+        if (value.endsWith(".0")) {
+            value = value.substring(0, value.length() - 2);
+        }
+        return value;
+    }
+
+    private String convertTimeToHHmm(String value) {
+        double numericValue = Double.parseDouble(value);
+        int totalSecondsInDay = 24 * 60 * 60;
+
+        // Step 1: Multiply the fractional part by the total number of seconds in a day
+        int totalSeconds = (int) (numericValue * totalSecondsInDay);
+
+        // Step 2: Convert the total seconds to hours, minutes, and seconds
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        // Format the result as "HH:mm:ss"
+        String time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        return time;
     }
 
     private HelicopterCompetitorLocation handlerExcelHelicopterLocation(
@@ -336,10 +380,18 @@ public class TestImpl implements TestService {
         switch (cell.getCellType())
         {
             case Cell.CELL_TYPE_NUMERIC:
-                result.append((int) cell.getNumericCellValue());
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    System.out.println("amazing");
+                    result.append(dfThree.format(cell.getDateCellValue()));
+                } else {
+                    result.append(cell.getNumericCellValue());
+                }
                 break;
             case Cell.CELL_TYPE_STRING:
                 result.append(cell.getStringCellValue());
+                break;
+            case Cell.CELL_TYPE_FORMULA:
+                result.append(cell.getCellFormula());
                 break;
         }
         return result.toString().trim();

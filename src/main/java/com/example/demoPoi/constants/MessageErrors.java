@@ -2,6 +2,8 @@ package com.example.demoPoi.constants;
 
 public enum MessageErrors {
     EXCEL_INVALID,
+
+    EXCEL_HEADER_INVALID,
     //UnAuthorized
     USER_UNAUTHORIZED,
     //ACCOUNT

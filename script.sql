@@ -87,65 +87,65 @@ INSERT INTO HELICOPTER_HST (
       :userId
 );
 
-
-select id from HELICOPTER_COMPETITOR_LOCATION where name = :name and rm_nm = :rmNm and am_nm = :amNm and city_nm = :cityNm and user_id = :userId and date_occur = :dateOccur limit 1
-select * from HELICOPTER_COMPETITOR_LOCATION
-
- "Multiplex,tSite code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area";
-
-Multiplex,Site code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area,City
-Multiplex,Site code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area,City
-
-SELECT sequence_name, start_value
-FROM information_schema.sequences
-WHERE sequence_name = 'sqe_that_cd_location_cptt';
-
-
-INSERT INTO HELICOPTER_COMPETITOR_LOCATION (
-    ID, THAT_CD, NAME, RM_CD, RM_NM, AM_CD, AM_NM, CITY_CD, CITY_NM,
-    DATE_OCCUR, USER_ID
-)
-VALUES (
-    NEXTVAL('sqe_id_location_cptt'),
-    NEXTVAL('sqe_that_cd_location_cptt'),
-    :name,
-    NEXTVAL('sqe_rm_location_cptt'),
-    :rmNm,
-    NEXTVAL('sqe_am_location_cptt'),
-    :amNm,
-    NEXTVAL('sqe_city_location_cptt'),
-    :cityNm,
-    :dateOccur,
-    :userId
-)
-
-
-INSERT INTO HELICOPTER_HST (
-    ID,NAME_FILE, SIZE_FILE, TIME_START, END_START,
-    STATUS, MESSAGE_ERROR, USER_ID
-) VALUES (
-      NEXTVAL('sqe_id_hst_cptt'),
-      :nameFile,
-      :sizeFile,
-      :timeStart,
-      :endStart,
-      :status,
-      :messageError,
-      :userId
-);
-
-select * from HELICOPTER_HST
-
-delete from HELICOPTER_HST
-
-
-
-select * from HELICOPTER_COMPETITOR_LOCATION
-drop table HELICOPTER_HST
-
-delete from HELICOPTER_COMPETITOR_LOCATION
-
-select hcl1_0.id from helicopter_competitor_location hcl1_0 where hcl1_0.name='' and hcl1_0.rm_nm=? and hcl1_0.am_nm=? and hcl1_0.city_nm=? and hcl1_0.user_id=? and hcl1_0.date_occur=?
-
-
-
+--
+--select id from HELICOPTER_COMPETITOR_LOCATION where name = :name and rm_nm = :rmNm and am_nm = :amNm and city_nm = :cityNm and user_id = :userId and date_occur = :dateOccur limit 1
+--select * from HELICOPTER_COMPETITOR_LOCATION
+--
+-- "Multiplex,tSite code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area";
+--
+--Multiplex,Site code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area,City
+--Multiplex,Site code,Cinema,Screen,Format,BO,Admits,Seat,Date of showing,Session,Film,Time range,Session (Short),Cinema Map,Tier,Region,Area,City
+--
+--SELECT sequence_name, start_value
+--FROM information_schema.sequences
+--WHERE sequence_name = 'sqe_that_cd_location_cptt';
+--
+--
+--INSERT INTO HELICOPTER_COMPETITOR_LOCATION (
+--    ID, THAT_CD, NAME, RM_CD, RM_NM, AM_CD, AM_NM, CITY_CD, CITY_NM,
+--    DATE_OCCUR, USER_ID
+--)
+--VALUES (
+--    NEXTVAL('sqe_id_location_cptt'),
+--    NEXTVAL('sqe_that_cd_location_cptt'),
+--    :name,
+--    NEXTVAL('sqe_rm_location_cptt'),
+--    :rmNm,
+--    NEXTVAL('sqe_am_location_cptt'),
+--    :amNm,
+--    NEXTVAL('sqe_city_location_cptt'),
+--    :cityNm,
+--    :dateOccur,
+--    :userId
+--)
+--
+--
+--INSERT INTO HELICOPTER_HST (
+--    ID,NAME_FILE, SIZE_FILE, TIME_START, END_START,
+--    STATUS, MESSAGE_ERROR, USER_ID
+--) VALUES (
+--      NEXTVAL('sqe_id_hst_cptt'),
+--      :nameFile,
+--      :sizeFile,
+--      :timeStart,
+--      :endStart,
+--      :status,
+--      :messageError,
+--      :userId
+--);
+--
+--select * from HELICOPTER_HST
+--
+--delete from HELICOPTER_HST
+--
+--
+--
+--select * from HELICOPTER_COMPETITOR_LOCATION
+--drop table HELICOPTER_HST
+--
+--delete from HELICOPTER_COMPETITOR_LOCATION
+--
+--select hcl1_0.id from helicopter_competitor_location hcl1_0 where hcl1_0.name='' and hcl1_0.rm_nm=? and hcl1_0.am_nm=? and hcl1_0.city_nm=? and hcl1_0.user_id=? and hcl1_0.date_occur=?
+--
+--
+--
